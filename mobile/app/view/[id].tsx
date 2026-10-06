@@ -81,7 +81,6 @@ export default function ViewProfile() {
       {action}
       {unlockAction ? <><View style={{ height: 8 }} />{unlockAction}</> : null}
       {lvl === 'matched' && <><View style={{ height: 8 }} /><Button title="View Compatibility" variant="secondary" onPress={() => router.push(`/compat/${p.userId}`)} /></>}
-      {lvl !== 'self' && <><View style={{ height: 8 }} /><Button title="✨ Why this profile?" variant="secondary" onPress={() => router.push(`/explain/${p.userId}`)} /></>}
       {lvl !== 'self' && <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
         <View style={{ flex: 1 }}><Button title="Report" variant="ghost" onPress={() => Alert.alert('Report profile', 'Reason?', [
           { text: 'Fake profile', onPress: () => report('fake_profile') }, { text: 'Scam', onPress: () => report('scam') },
