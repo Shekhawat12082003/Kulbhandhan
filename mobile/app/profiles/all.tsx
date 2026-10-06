@@ -46,6 +46,8 @@ export default function AllProfiles() {
         data={profiles}
         keyExtractor={(profile) => profile.userId}
         contentContainerStyle={{ padding: 20, paddingBottom: 28 }}
+        numColumns={2}
+        columnWrapperStyle={{ gap: 12 }}
         refreshing={refreshing}
         onRefresh={() => { setRefreshing(true); load(); }}
         ListHeaderComponent={
@@ -56,7 +58,7 @@ export default function AllProfiles() {
         ListEmptyComponent={loading
           ? <ActivityIndicator color={colors.maroon} style={{ marginTop: 40 }} />
           : <Text style={{ color: error ? colors.danger : colors.muted, textAlign: 'center', marginTop: 24 }}>{error || 'No profiles are available yet.'}</Text>}
-        renderItem={({ item }) => <ProfileCard p={item} />}
+        renderItem={({ item }) => <ProfileCard p={item} variant="grid" />}
       />
     </SafeAreaView>
   );
