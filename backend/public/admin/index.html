@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KULBANDHAN Admin</title>
+<style>
+  :root { --maroon:#6B1E2B; --ivory:#FBF7F0; --beige:#EFE6D8; --gold:#B08D4C; --charcoal:#2B2B2B; --border:#E2D7C5; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, Segoe UI, Roboto, sans-serif; background:var(--ivory); color:var(--charcoal); }
+  header { background:var(--maroon); color:#fff; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; }
+  header h1 { font-size:18px; margin:0; font-weight:600; letter-spacing:1px; }
+  nav { display:flex; gap:4px; padding:12px 24px; background:#fff; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  nav button { border:none; background:transparent; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:14px; color:var(--charcoal); }
+  nav button.active { background:var(--beige); color:var(--maroon); font-weight:600; }
+  main { padding:24px; max-width:960px; margin:0 auto; }
+  .card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; }
+  .stat { flex:1; min-width:120px; text-align:center; }
+  .stat b { display:block; font-size:28px; color:var(--maroon); }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th,td { text-align:left; padding:8px; border-bottom:1px solid var(--border); vertical-align:top; }
+  button.btn { background:var(--maroon); color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px; margin-right:6px; }
+  button.btn.secondary { background:#fff; color:var(--maroon); border:1px solid var(--maroon); }
+  input { padding:8px; border:1px solid var(--border); border-radius:6px; font-size:14px; }
+  .muted { color:#7A7168; font-size:13px; }
+  #login { max-width:360px; margin:80px auto; text-align:center; }
+  #login h2 { font-family: serif; color:var(--maroon); }
+  .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; background:var(--beige); color:var(--maroon); margin-right:4px; }
+</style>
+</head>
+<body>
+<div id="login">
+  <h2>KULBANDHAN Admin</h2>
+  <p class="muted">Sign in with an admin account (email + OTP). Promote a user first: <code>npm run seed:admin -- you@example.com</code></p>
+  <div id="loginStep1">
+    <input id="email" placeholder="admin email" style="width:100%; margin-bottom:8px" />
+    <button class="btn" style="width:100%" onclick="requestCode()">Send Code</button>
+  </div>
+  <div id="loginStep2" style="display:none">
+    <input id="code" placeholder="6-digit code (check server console)" style="width:100%; margin-bottom:8px" />
+    <button class="btn" style="width:100%" onclick="verifyCode()">Verify & Sign In</button>
+  </div>
+  <p id="loginErr" style="color:#B3261E"></p>
+</div>
+
+<div id="app" style="display:none">
+  <header><h1>KULBANDHAN — Admin</h1><button class="btn secondary" onclick="logout()">Log out</button></header>
+  <nav>
+    <button class="tab active" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button>
+    <button class="tab" data-tab="reports" onclick="showTab('reports')">Reports</button>
+    <button class="tab" data-tab="verifications" onclick="showTab('verifications')">Verification</button>
+    <button class="tab" data-tab="users" onclick="showTab('users')">Users</button>
+    <button class="tab" data-tab="audit" onclick="showTab('audit')">Audit Log</button>
+  </nav>
+  <main id="main"></main>
+</div>
+
+<script>
+const API = location.origin + '/api';
+let token = localStorage.getItem('kb_admin_token') || '';
+
+function authHeaders() { return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }; }
+async function api(path, method, body) {
+  const res = await fetch(API + path, { method: method || 'GET', headers: authHeaders(), body: body ? JSON.stringify(body) : undefined });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.message || 'Request failed');
+  return json.data;
+}
+
+let pendingEmail = '';
+async function requestCode() {
+  pendingEmail = document.getElementById('email').value.trim();
+  document.getElementById('loginErr').textContent = '';
+  try {
+    await fetch(API + '/auth/otp/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ identifier: pendingEmail, kind: 'email' }) });
+    document.getElementById('loginStep1').style.display = 'none';
+    document.getElementById('loginStep2').style.display = 'block';
+  } catch (e) { document.getElementById('loginErr').textContent = e.message; }
+}
+async function verifyCode() {
+  const code = document.getElementById('code').value.trim();
+  try {
+    const res = await fetch(API + '/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ identifier: pendingEmail, kind: 'email', code }) });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message);
+    token = json.data.accessToken; localStorage.setItem('kb_admin_token', token);
+    boot();
+  } catch (e) { document.getElementById('loginErr').textContent = e.message; }
+}
+function logout() { localStorage.removeItem('kb_admin_token'); token = ''; location.reload(); }
+
+function esc(s) { return (s ?? '').toString().replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function who(u) { return u ? esc(u.email || u.phone || u._id) : 'unknown'; }
+
+async function showTab(name) {
+  document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === name));
+  const main = document.getElementById('main');
+  main.innerHTML = '<p class="muted">Loading…</p>';
+  try {
+    if (name === 'dashboard') {
+      const d = await api('/admin/dashboard');
+      main.innerHTML = '<div class="card row">' +
+        stat(d.users, 'Users') + stat(d.openReports, 'Open Reports') + stat(d.pendingVerifications, 'Pending Verification') + stat(d.suspended, 'Suspended/Banned') + '</div>';
+    } else if (name === 'reports') {
+      const d = await api('/admin/reports?status=open');
+      main.innerHTML = '<div class="card"><table><tr><th>Reason</th><th>Reporter</th><th>Reported</th><th>Details</th><th></th></tr>' +
+        d.reports.map((r) => `<tr><td>${esc(r.reason)}</td><td>${who(r.reporter)}</td><td>${who(r.reported)} <span class="muted">(${esc(r.reported?.moderationState)})</span></td><td>${esc(r.details)}</td>
+          <td><button class="btn secondary" onclick="reportAction('${r._id}','dismiss')">Dismiss</button>
+              <button class="btn" onclick="reportAction('${r._id}','suspend_reported')">Suspend</button>
+              <button class="btn" style="background:#B3261E" onclick="reportAction('${r._id}','ban_reported')">Ban</button></td></tr>`).join('') +
+        '</table>' + (d.reports.length ? '' : '<p class="muted">No open reports.</p>') + '</div>';
+    } else if (name === 'verifications') {
+      const d = await api('/admin/verifications?status=pending');
+      main.innerHTML = '<div class="card"><table><tr><th>User</th><th>Type</th><th>Note</th><th></th></tr>' +
+        d.requests.map((v) => `<tr><td>${who(v.userId)}</td><td><span class="badge">${esc(v.type)}</span></td><td>${esc(v.note)}</td>
+          <td><button class="btn" onclick="reviewVerification('${v._id}','approve')">Approve</button>
+              <button class="btn secondary" onclick="reviewVerification('${v._id}','reject')">Reject</button></td></tr>`).join('') +
+        '</table>' + (d.requests.length ? '' : '<p class="muted">Nothing pending.</p>') + '</div>';
+    } else if (name === 'users') {
+      main.innerHTML = '<div class="card"><input id="uq" placeholder="search email or phone" onkeydown="if(event.key===\'Enter\')searchUsers()"/> <button class="btn secondary" onclick="searchUsers()">Search</button><div id="userResults"></div></div>';
+      searchUsers();
+    } else if (name === 'audit') {
+      const d = await api('/admin/audit-logs');
+      main.innerHTML = '<div class="card"><table><tr><th>When</th><th>Admin</th><th>Action</th><th>Target</th><th>Details</th></tr>' +
+        d.logs.map((l) => `<tr><td class="muted">${new Date(l.createdAt).toLocaleString()}</td><td>${who(l.adminId)}</td><td>${esc(l.action)}</td><td>${esc(l.targetType)}</td><td>${esc(l.details)}</td></tr>`).join('') +
+        '</table></div>';
+    }
+  } catch (e) { main.innerHTML = '<p style="color:#B3261E">' + esc(e.message) + '</p>'; }
+}
+function stat(v, label) { return `<div class="stat"><b>${v}</b>${label}</div>`; }
+
+async function reportAction(id, action) { await api(`/admin/reports/${id}/action`, 'POST', { action }); showTab('reports'); }
+async function reviewVerification(id, action) { await api(`/admin/verifications/${id}/review`, 'POST', { action }); showTab('verifications'); }
+
+async function searchUsers() {
+  const q = document.getElementById('uq')?.value || '';
+  const d = await api('/admin/users?q=' + encodeURIComponent(q));
+  document.getElementById('userResults').innerHTML = '<table><tr><th>User</th><th>Role</th><th>Status</th><th>Joined</th><th></th></tr>' +
+    d.users.map((u) => `<tr><td>${who(u)}</td><td>${esc(u.role)}</td><td>${esc(u.moderationState)}</td><td class="muted">${new Date(u.createdAt).toLocaleDateString()}</td>
+      <td>${['active','under_review','restricted','suspended','banned'].map((s) => `<button class="btn secondary" onclick="setState('${u._id}','${s}')">${s}</button>`).join(' ')}</td></tr>`).join('');
+}
+async function setState(userId, state) { await api(`/admin/users/${userId}/moderation`, 'POST', { state }); searchUsers(); }
+
+function boot() { document.getElementById('login').style.display = 'none'; document.getElementById('app').style.display = 'block'; showTab('dashboard'); }
+if (token) boot();
+</script>
+</body>
+</html>
