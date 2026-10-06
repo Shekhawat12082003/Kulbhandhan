@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Text, View } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { Screen } from '../../src/components/Screen';
 import { PhotoGrid } from '../../src/components/PhotoGrid';
@@ -33,6 +33,7 @@ export default function ViewProfile() {
   if (!data) return <Screen><ActivityIndicator color={colors.maroon} style={{ marginTop: 80 }} /></Screen>;
   const { profile: p, interest } = data;
   const lvl = p.access;
+  const primaryPhoto = photoData?.photos?.find((photo: any) => !photo.locked && photo.url);
 
   async function interestTap() {
     setBusy(true);
@@ -61,6 +62,11 @@ export default function ViewProfile() {
   return (
     <Screen>
       <Stack.Screen options={{ headerShown: true, title: '', headerStyle: { backgroundColor: colors.ivory }, headerTintColor: colors.maroon }} />
+      <View style={{ height: 300, borderRadius: 20, overflow: 'hidden', backgroundColor: colors.beige, marginBottom: 16, alignItems: 'center', justifyContent: 'center' }}>
+        {primaryPhoto
+          ? <Image source={{ uri: primaryPhoto.url }} resizeMode="cover" style={{ width: '100%', height: '100%' }} />
+          : <Text style={{ color: colors.muted }}>Profile image unavailable</Text>}
+      </View>
       <Text style={{ fontFamily: 'serif', fontSize: 28, color: colors.maroon }}>{p.displayName}, {p.age}</Text>
       <Text style={{ color: colors.muted, marginBottom: 16 }}>{[p.city, p.profession].filter(Boolean).join(' · ')}</Text>
 <VerifiedBadges badges={p.badges} />
