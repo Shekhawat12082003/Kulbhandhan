@@ -7,8 +7,9 @@ import { api } from '../../src/lib/api';
 import { ProfileCard } from '../../src/components/ProfileCard';
 import { colors, shadow } from '../../src/theme';
 
-const RED = '#E91B16';
-const YELLOW = '#FFD21C';
+const RED = colors.maroon;
+const YELLOW = '#E7C66A';
+const INK = colors.charcoal;
 
 function profileCompletion(profile: any) {
   const fields = ['displayName', 'city', 'state', 'heightCm', 'education', 'profession', 'about'];
@@ -21,7 +22,7 @@ function Action({ icon, label, onPress }: { icon: keyof typeof Ionicons.glyphMap
       <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: RED, alignItems: 'center', justifyContent: 'center' }}>
         <Ionicons name={icon} size={28} color="#fff" />
       </View>
-      <Text style={{ color: '#111', fontSize: 11, fontWeight: '700', marginTop: 8, letterSpacing: 0.5 }}>{label}</Text>
+      <Text style={{ color: colors.maroon, fontSize: 11, fontWeight: '700', marginTop: 8, letterSpacing: 0.5 }}>{label}</Text>
     </Pressable>
   );
 }
@@ -31,8 +32,8 @@ function Section({ title, count, subtitle, profiles, onShowAll }: { title: strin
     <View style={[{ backgroundColor: '#fff', borderRadius: 24, padding: 18, marginBottom: 16 }, shadow]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ color: '#111', fontSize: 20, fontWeight: '800' }}>{title} <Text style={{ color: RED }}>({count})</Text></Text>
-          <Text style={{ color: '#777', marginTop: 4 }}>{subtitle}</Text>
+          <Text style={{ color: INK, fontFamily: 'serif', fontSize: 21, fontWeight: '700' }}>{title} <Text style={{ color: RED }}>({count})</Text></Text>
+          <Text style={{ color: colors.muted, marginTop: 4 }}>{subtitle}</Text>
         </View>
         <Pressable onPress={onShowAll} accessibilityRole="button" style={{ alignItems: 'center', padding: 6 }}>
           <Ionicons name="eye-outline" size={22} color={RED} />
@@ -43,7 +44,7 @@ function Section({ title, count, subtitle, profiles, onShowAll }: { title: strin
         ? <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingTop: 16 }}>
             {profiles.map((profile) => <ProfileCard key={profile.userId} p={profile} variant="preview" />)}
           </ScrollView>
-        : <Text style={{ color: '#777', marginTop: 18 }}>No profiles are available yet.</Text>}
+        : <Text style={{ color: colors.muted, marginTop: 18 }}>No profiles are available yet.</Text>}
     </View>
   );
 }
@@ -79,12 +80,12 @@ export default function Home() {
   const firstName = profile?.displayName?.split(' ')[0] ?? 'there';
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFDF2' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.ivory }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 28 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={RED} />}>
         <View style={{ backgroundColor: RED, marginHorizontal: 12, borderRadius: 22, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Pressable onPress={() => router.push('/(tabs)/profile')} accessibilityLabel="Open profile menu"><Ionicons name="grid-outline" size={25} color="#fff" /></Pressable>
-          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>Dashboard</Text>
+          <Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 22, fontWeight: '700' }}>Dashboard</Text>
           <View style={{ flexDirection: 'row', gap: 16 }}>
             <Pressable onPress={() => router.push('/(tabs)/discover')} accessibilityLabel="Search profiles"><Ionicons name="search-outline" size={24} color="#fff" /></Pressable>
             <Pressable onPress={() => router.push('/(tabs)/interests')} accessibilityLabel="Open interests"><Ionicons name="notifications-outline" size={24} color="#fff" /></Pressable>
@@ -92,15 +93,15 @@ export default function Home() {
         </View>
 
         <View style={{ backgroundColor: YELLOW, marginTop: 12, padding: 24, paddingBottom: 26, borderBottomLeftRadius: 34, borderBottomRightRadius: 34 }}>
-          <Text style={{ color: '#111', fontSize: 14, fontWeight: '600' }}>WELCOME BACK, {firstName.toUpperCase()}</Text>
+          <Text style={{ color: colors.maroonDark, fontSize: 13, fontWeight: '700', letterSpacing: 1 }}>WELCOME BACK, {firstName.toUpperCase()}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>
             <View style={{ width: 92, height: 92, borderRadius: 46, backgroundColor: '#fff', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-              {photoUrl ? <Image source={{ uri: photoUrl }} style={{ width: '100%', height: '100%' }} /> : <Ionicons name="person" size={48} color={RED} />}
+              {photoUrl ? <Image source={{ uri: photoUrl }} style={{ width: '100%', height: '100%' }} /> : <Ionicons name="person" size={48} color={colors.maroon} />}
             </View>
             <View style={{ flex: 1, marginLeft: 16 }}>
-              <Text style={{ color: '#111', fontSize: 23, fontWeight: '800' }}>{profile?.displayName}</Text>
-              <Text style={{ color: '#555', marginTop: 5 }}>{profile?.published ? 'Active profile' : 'Profile paused'}</Text>
-              <Text style={{ color: '#555', marginTop: 3 }}>{profile?.badges?.length ? 'Verified' : 'Verification pending'}</Text>
+              <Text style={{ color: INK, fontFamily: 'serif', fontSize: 24, fontWeight: '700' }}>{profile?.displayName}</Text>
+              <Text style={{ color: colors.maroonDark, marginTop: 5 }}>{profile?.published ? 'Active profile' : 'Profile paused'}</Text>
+              <Text style={{ color: colors.maroonDark, marginTop: 3 }}>{profile?.badges?.length ? 'Verified' : 'Verification pending'}</Text>
             </View>
             <Pressable onPress={() => router.push('/onboarding')} accessibilityRole="button" style={{ backgroundColor: RED, borderRadius: 18, padding: 10 }}>
               <Ionicons name="create-outline" size={21} color="#fff" />
@@ -108,7 +109,7 @@ export default function Home() {
           </View>
           <View style={{ marginTop: 20 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Text style={{ color: '#111', fontWeight: '800', fontSize: 12 }}>PROFILE COMPLETION</Text><Text style={{ color: RED, fontWeight: '800' }}>{completion}%</Text></View>
-            <View style={{ height: 8, borderRadius: 4, backgroundColor: '#fff', marginTop: 8, overflow: 'hidden' }}><View style={{ width: `${completion}%`, height: '100%', backgroundColor: RED }} /></View>
+            <View style={{ height: 8, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.72)', marginTop: 8, overflow: 'hidden' }}><View style={{ width: `${completion}%`, height: '100%', backgroundColor: RED }} /></View>
           </View>
         </View>
 
