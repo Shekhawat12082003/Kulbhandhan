@@ -122,8 +122,8 @@ export default function Home() {
         {loading && <ActivityIndicator color={RED} style={{ marginVertical: 20 }} />}
         {!!error && <Text style={{ color: colors.danger, textAlign: 'center', margin: 20 }}>{error}</Text>}
         {!loading && !error && <>
-          <Section title="Recently Joined" count={profiles.length} subtitle={`You have ${profiles.length} recently joined profiles.`} profiles={profiles.slice(0, 8)} onShowAll={() => router.push('/(tabs)/discover')} />
-          <Section title="Recently Active" count={profiles.length} subtitle={`You have ${profiles.length} recently active profiles.`} profiles={profiles.slice(0, 8)} onShowAll={() => router.push('/(tabs)/discover')} />
+          <Section title="Recently Joined" count={profiles.length} subtitle={`You have ${profiles.length} recently joined profiles.`} profiles={profiles.slice(0, 8)} onShowAll={() => router.push('/profiles/all?section=joined')} />
+          <Section title="Recently Active" count={profiles.length} subtitle={`You have ${profiles.length} recently active profiles.`} profiles={profiles.slice(0, 8)} onShowAll={() => router.push('/profiles/all?section=active')} />
         </>}
       </ScrollView>
     </SafeAreaView>
