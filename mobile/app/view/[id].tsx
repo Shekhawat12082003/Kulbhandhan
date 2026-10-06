@@ -13,6 +13,7 @@ export default function ViewProfile() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [data, setData] = useState<any>(null);
   const [busy, setBusy] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
   const load = () => api(`/profiles/${id}`).then(setData).catch((e) => Alert.alert('Error', e.message, [{ text: 'OK', onPress: () => router.back() }]));
   useEffect(() => { load(); }, [id]);
   const [photoData, setPhotoData] = useState<any>(null);
@@ -41,7 +42,6 @@ export default function ViewProfile() {
       await load();
     } catch (e: any) { Alert.alert('Could not send interest', e.message); } finally { setBusy(false); }
   }
-  const [unlocking, setUnlocking] = useState(false);
   async function unlockTap() {
     setUnlocking(true);
     try {
