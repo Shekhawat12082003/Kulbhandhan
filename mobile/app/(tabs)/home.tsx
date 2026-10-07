@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, Image, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -87,23 +87,24 @@ export default function Home() {
   const checklist = storyFields.map(([label, check]) => ({ label, done: check(profile) }));
 
   return <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F0E3' }}>
+    <ImageBackground source={require('../../assets/heritage/parchment-texture.png')} imageStyle={{ opacity: 0.22 }} style={{ flex: 1 }}>
     <ScrollView contentContainerStyle={{ paddingBottom: 32 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={red} />}>
       <View style={{ height: 76, backgroundColor: paper, borderBottomWidth: 1, borderBottomColor: border, paddingHorizontal: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ width: 36, height: 45, borderWidth: 2, borderColor: gold, borderTopLeftRadius: 19, borderTopRightRadius: 19, alignItems: 'center', justifyContent: 'center' }}><Ionicons name="home-outline" size={18} color={red} /></View>
-          <View style={{ marginLeft: 9 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 20, fontWeight: '700' }}>KULBANDHAN</Text><Text style={{ color: ink, fontFamily: 'serif', fontSize: 10 }}>Do Kul, Ek Bandhan</Text></View>
+          <Image source={require('../../assets/heritage/kulbandhan-mark.png')} resizeMode="contain" style={{ width: 190, height: 58 }} />
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}><Pressable onPress={() => router.push('/(tabs)/discover')}><Ionicons name="search-outline" size={22} color={ink} /></Pressable><Pressable onPress={() => router.push('/(tabs)/interests')}><Ionicons name="notifications-outline" size={22} color={ink} /></Pressable><Pressable onPress={() => router.push('/(tabs)/profile')}><Ionicons name="person-circle-outline" size={25} color={ink} /></Pressable></View>
       </View>
 
       <View style={{ padding: 22, paddingTop: 29, backgroundColor: '#E9D6B5', minHeight: 156, position: 'relative', overflow: 'hidden' }}>
-        <View style={{ position: 'absolute', right: -15, top: -80, width: 250, height: 250, borderWidth: 13, borderColor: 'rgba(90,23,38,0.25)', borderRadius: 125 }} />
+        <Image source={require('../../assets/heritage/jharokha-arch.png')} resizeMode="contain" style={{ position: 'absolute', right: 10, top: 7, width: 105, height: 140, opacity: 0.78 }} />
         <Text style={{ color: ink, fontFamily: 'serif', fontSize: 15, fontStyle: 'italic' }}>Namaste,</Text>
         <Text style={{ color: ink, fontFamily: 'serif', fontSize: 32, fontWeight: '700', marginTop: 1 }}>{firstName}</Text>
         <Text style={{ color: ink, fontSize: 13, marginTop: 6 }}>जहाँ दो कुल, एक नए बंधन से जुड़ते हैं।</Text>
       </View>
 
-      <View style={[{ marginHorizontal: 18, marginTop: -1, padding: 15, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 7 }, shadow]}>
+      <View style={[{ marginHorizontal: 18, marginTop: -1, padding: 15, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 7, overflow: 'hidden' }, shadow]}>
+        <Image source={require('../../assets/heritage/jaali-pattern.png')} resizeMode="cover" style={{ position: 'absolute', right: 0, bottom: 0, width: 115, height: 65, opacity: 0.13 }} />
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}><View><Text style={{ color: red, fontFamily: 'serif', fontSize: 19, fontWeight: '700' }}>Your Family Story</Text><Text style={{ color: ink, fontSize: 11, marginTop: 3 }}>{ready}% complete</Text></View><Pressable onPress={() => router.push('/onboarding')} style={{ backgroundColor: red, paddingHorizontal: 13, paddingVertical: 9, borderRadius: 5 }}><Text style={{ color: '#fff', fontSize: 10, fontWeight: '700' }}>CONTINUE YOUR STORY  →</Text></Pressable></View>
         <View style={{ height: 7, backgroundColor: '#E8DCC5', borderRadius: 3, marginTop: 12, overflow: 'hidden' }}><View style={{ width: `${ready}%`, height: '100%', backgroundColor: red }} /></View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 }}>{checklist.map((item) => <View key={item.label} style={{ width: '50%', flexDirection: 'row', alignItems: 'center', paddingTop: 7 }}><Ionicons name={item.done ? 'checkmark-circle' : 'ellipse-outline'} size={13} color={item.done ? red : gold} /><Text style={{ color: ink, fontSize: 10, marginLeft: 5 }}>{item.label}</Text></View>)}</View>
@@ -124,5 +125,6 @@ export default function Home() {
       </View>}
       <View style={{ marginHorizontal: 18, marginTop: 15, flexDirection: 'row', backgroundColor: maroon, borderRadius: 6 }}><Pressable onPress={() => router.push('/(tabs)/interests')} style={{ flex: 1, alignItems: 'center', padding: 12, borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.3)' }}><Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 21 }}>{interestCount}</Text><Text style={{ color: '#E8DCC5', fontSize: 10 }}>INTERESTS</Text></Pressable><Pressable onPress={() => router.push('/(tabs)/matches')} style={{ flex: 1, alignItems: 'center', padding: 12 }}><Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 21 }}>{matchCount}</Text><Text style={{ color: '#E8DCC5', fontSize: 10 }}>CONNECTIONS</Text></Pressable></View>
     </ScrollView>
+    </ImageBackground>
   </SafeAreaView>;
 }
