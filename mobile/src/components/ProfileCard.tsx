@@ -8,14 +8,14 @@ export function ProfileCard({ p, children, variant = 'full' }: { p: any; childre
   if (variant === 'preview' || variant === 'grid') return (
     <Pressable onPress={() => router.push(`/view/${p.userId}`)} accessibilityRole="button"
       accessibilityLabel={`${p.displayName}, age ${p.age}${p.heightCm ? `, height ${p.heightCm} centimeters` : ''}`}
-      style={[{ width: variant === 'grid' ? '100%' : 224, backgroundColor: colors.offWhite, borderRadius: variant === 'grid' ? radius.lg : 6, padding: 8, marginRight: variant === 'grid' ? 0 : 12, borderWidth: 1, borderColor: colors.border }, shadow]}>
-      <View style={{ width: '100%', height: variant === 'grid' ? 150 : 228, borderRadius: variant === 'grid' ? radius.md : 4, overflow: 'hidden', backgroundColor: colors.beige, alignItems: 'center', justifyContent: 'center' }}>
+      style={[{ width: variant === 'grid' ? '100%' : 224, backgroundColor: '#FBF5E8', borderRadius: variant === 'grid' ? radius.lg : 6, padding: 8, marginRight: variant === 'grid' ? 0 : 12, borderWidth: 1, borderColor: '#B08A45' }, shadow]}>
+      <View style={{ width: '100%', height: variant === 'grid' ? 150 : 228, borderRadius: variant === 'grid' ? radius.md : 4, overflow: 'hidden', backgroundColor: colors.beige, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#D6BE98' }}>
         {p.photoUrl
           ? <Image source={{ uri: p.photoUrl }} resizeMode="cover" style={{ width: '100%', height: '100%' }} />
           : <Ionicons name="person" size={84} color={colors.maroon} />}
       </View>
-      <Text numberOfLines={1} style={{ color: colors.charcoal, fontSize: variant === 'grid' ? 15 : 17, fontWeight: '600', marginTop: 10 }}>{p.displayName}</Text>
-      <Text numberOfLines={1} style={{ color: colors.muted, marginTop: 3 }}>{p.age} years{p.heightCm ? ` · ${p.heightCm} cm` : ''}</Text>
+      <Text numberOfLines={1} style={{ color: colors.maroon, fontFamily: 'serif', fontSize: variant === 'grid' ? 15 : 17, fontWeight: '700', marginTop: 10 }}>{p.displayName}</Text>
+      <Text numberOfLines={1} style={{ color: colors.muted, marginTop: 3 }}>{p.age} years{p.heightCm ? ` · ${p.heightCm} cm` : ''}{p.city ? ` · ${p.city}` : ''}</Text>
     </Pressable>
   );
 

@@ -12,8 +12,8 @@ export default function TabsLayout() {
   if (!loading && !user) return <Redirect href="/auth/welcome" />;
   return (
     <Tabs screenOptions={{
-      headerShown: false, tabBarActiveTintColor: colors.maroon, tabBarInactiveTintColor: colors.muted,
-      tabBarStyle: { backgroundColor: colors.ivory, borderTopColor: colors.border },
+      headerShown: false, tabBarActiveTintColor: colors.gold, tabBarInactiveTintColor: colors.ivory,
+      tabBarStyle: { backgroundColor: colors.maroonDark, borderTopColor: colors.gold, height: 64, paddingBottom: 7, paddingTop: 5 },
     }}>
       <Tabs.Screen name="home" options={{ title: 'Home', tabBarIcon: icon('home-outline') }} />
       <Tabs.Screen name="discover" options={{ title: 'Discover', tabBarIcon: icon('search-outline') }} />
