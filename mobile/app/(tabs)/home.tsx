@@ -29,26 +29,23 @@ function percent(profile: any) {
   return Math.round(storyFields.filter(([, check]) => check(profile)).length / storyFields.length * 100);
 }
 
-function MiniPortrait({ profile, index }: { profile: any; index: number }) {
+function MiniPortrait({ profile }: { profile: any }) {
   return (
-    <Pressable onPress={() => router.push(`/view/${profile.userId}`)} style={[{ width: 174, backgroundColor: paper, borderWidth: 1, borderColor: gold, borderRadius: 5, padding: 7, marginRight: 10 }, shadow]}>
-      <View style={{ height: 112, backgroundColor: '#E6D4B8', borderRadius: 3, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: border }}>
+    <Pressable onPress={() => router.push(`/view/${profile.userId}`)} style={[{ width: 132, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 5, padding: 6, marginRight: 10 }, shadow]}>
+      <View style={{ height: 132, backgroundColor: '#E6D4B8', borderRadius: 3, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
         {profile.photoUrl ? <Image source={{ uri: profile.photoUrl }} resizeMode="cover" style={{ width: '100%', height: '100%' }} /> : <Ionicons name="person" size={48} color={red} />}
-        <Image source={require('../../assets/heritage/asset-kit/profile-seal.png')} resizeMode="contain" style={{ position: 'absolute', right: 3, top: 3, width: 25, height: 25 }} />
       </View>
       <Text numberOfLines={1} style={{ color: red, fontFamily: 'serif', fontSize: 14, fontWeight: '700', marginTop: 7 }}>{profile.displayName}</Text>
       <Text numberOfLines={1} style={{ color: colors.muted, fontSize: 10, marginTop: 2 }}>{profile.age}{profile.city ? ` · ${profile.city}` : ''}</Text>
-      <Text numberOfLines={1} style={{ color: colors.muted, fontSize: 10, marginTop: 2 }}>{profile.education || 'Education'} · {profile.profession || 'Working'}</Text>
-      <Text numberOfLines={1} style={{ color: colors.muted, fontSize: 10, marginTop: 2 }}>{profile.heritage?.kul || 'Rajput'} · {profile.heritage?.gotra || 'Heritage family'}</Text>
-      <Text style={{ color: red, fontSize: 10, marginTop: 4 }}>♡ {Math.max(72, 89 - index * 5)}% Match</Text>
+      <Text numberOfLines={1} style={{ color: colors.muted, fontSize: 10, marginTop: 2 }}>{profile.profession || profile.education || 'Profile details'}</Text>
       <View style={{ backgroundColor: red, borderRadius: 3, paddingVertical: 6, alignItems: 'center', marginTop: 7 }}><Text style={{ color: '#fff', fontSize: 10, fontWeight: '700' }}>VIEW PROFILE</Text></View>
     </Pressable>
   );
 }
 
-function HeritageCard({ icon, image, title, note }: { icon: keyof typeof Ionicons.glyphMap; image: any; title: string; note: string }) {
+function HeritageCard({ icon, title, note }: { icon: keyof typeof Ionicons.glyphMap; title: string; note: string }) {
   return <Pressable onPress={() => router.push('/(tabs)/discover')} style={{ flex: 1, minHeight: 108, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: border, backgroundColor: paper, marginRight: 7 }}>
-    <Image source={image} resizeMode="contain" style={{ width: 36, height: 38 }} />
+    <Ionicons name={icon} size={25} color={gold} />
     <Text style={{ color: ink, fontFamily: 'serif', fontSize: 15, fontWeight: '700', marginTop: 8 }}>{title}</Text>
     <Text style={{ color: colors.muted, fontSize: 9, textAlign: 'center', marginTop: 3 }}>{note}</Text>
   </Pressable>;
@@ -94,21 +91,16 @@ export default function Home() {
     <ScrollView contentContainerStyle={{ paddingBottom: 32 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={red} />}>
       <View style={{ height: 76, backgroundColor: paper, borderBottomWidth: 1, borderBottomColor: border, paddingHorizontal: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={require('../../assets/heritage/kulbandhan-mark.png')} resizeMode="contain" style={{ width: 48, height: 58 }} />
-          <View style={{ marginLeft: 8 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 21, fontWeight: '700' }}>KULBANDHAN</Text><Text style={{ color: ink, fontFamily: 'serif', fontSize: 11 }}>Do Kul, Ek Bandhan</Text></View>
+          <Image source={require('../../assets/heritage/kulbandhan-mark.png')} resizeMode="contain" style={{ width: 190, height: 58 }} />
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}><Pressable onPress={() => router.push('/(tabs)/discover')}><Ionicons name="search-outline" size={22} color={ink} /></Pressable><Pressable onPress={() => router.push('/(tabs)/interests')}><Ionicons name="notifications-outline" size={22} color={ink} /></Pressable><Pressable onPress={() => router.push('/(tabs)/profile')}><Ionicons name="person-circle-outline" size={25} color={ink} /></Pressable></View>
       </View>
 
-      <View style={{ padding: 22, paddingTop: 29, backgroundColor: '#E9D6B5', minHeight: 176, position: 'relative', overflow: 'hidden', borderBottomWidth: 1, borderBottomColor: gold }}>
-        <Image source={require('../../assets/heritage/jharokha-arch.png')} resizeMode="stretch" style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', opacity: 0.52 }} />
-        <View style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(233,214,181,0.35)' }} />
-        <View style={{ position: 'absolute', right: 12, top: 16, width: 106, height: 140, borderWidth: 2, borderColor: 'rgba(176,138,69,0.7)', borderTopLeftRadius: 52, borderTopRightRadius: 52 }} />
-        <View style={{ position: 'relative' }}>
+      <View style={{ padding: 22, paddingTop: 29, backgroundColor: '#E9D6B5', minHeight: 156, position: 'relative', overflow: 'hidden' }}>
+        <Image source={require('../../assets/heritage/jharokha-arch.png')} resizeMode="contain" style={{ position: 'absolute', right: 10, top: 7, width: 105, height: 140, opacity: 0.78 }} />
         <Text style={{ color: ink, fontFamily: 'serif', fontSize: 15, fontStyle: 'italic' }}>Namaste,</Text>
         <Text style={{ color: ink, fontFamily: 'serif', fontSize: 32, fontWeight: '700', marginTop: 1 }}>{firstName}</Text>
         <Text style={{ color: ink, fontSize: 13, marginTop: 6 }}>जहाँ दो कुल, एक नए बंधन से जुड़ते हैं।</Text>
-        </View>
       </View>
 
       <View style={[{ marginHorizontal: 18, marginTop: -1, padding: 15, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 7, overflow: 'hidden' }, shadow]}>
@@ -120,7 +112,7 @@ export default function Home() {
 
       <View style={{ marginHorizontal: 18, marginTop: 14, padding: 18, backgroundColor: maroon, borderRadius: 7, flexDirection: 'row', alignItems: 'center' }}><Ionicons name="compass-outline" size={38} color="#D8B873" /><View style={{ flex: 1, marginLeft: 12 }}><Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 22, fontWeight: '700' }}>Discover Families</Text><Text style={{ color: '#F1E6D8', fontSize: 11, marginTop: 3 }}>Explore profiles aligned with your values, heritage and preferences.</Text></View><Pressable onPress={() => router.push('/(tabs)/discover')}><Text style={{ color: '#D8B873', fontSize: 11, fontWeight: '700' }}>EXPLORE  →</Text></Pressable></View>
 
-      <View style={{ marginHorizontal: 18, marginTop: 16, flexDirection: 'row' }}><View style={{ flex: 1, padding: 14, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 6, marginRight: 7 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 20, fontWeight: '700' }}>From One Kul to Another</Text><Text style={{ color: colors.muted, fontSize: 10, marginTop: 3 }}>Explore heritage, lineage and family compatibility.</Text>      <View style={{ flexDirection: 'row', marginTop: 12 }}><HeritageCard icon="home-outline" image={require('../../assets/heritage/asset-kit/kul-symbol.png')} title="Kul" note="Compatibility" /><HeritageCard icon="git-branch-outline" image={require('../../assets/heritage/asset-kit/vansh-symbol.png')} title="Vansh" note="Lineage" /><HeritageCard icon="grid-outline" image={require('../../assets/heritage/asset-kit/gotra-symbol.png')} title="Gotra" note="Traditions" /></View></View><View style={{ width: 155, padding: 14, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 6 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 20, fontWeight: '700' }}>Kundli Milan</Text><Text style={{ color: colors.muted, fontSize: 10, marginTop: 3 }}>Where tradition meets thoughtful compatibility.</Text><View style={{ alignItems: 'center', marginTop: 12 }}><Image source={require('../../assets/heritage/asset-kit/kundli-wheel.png')} style={{ width: 72, height: 72 }} /><Text style={{ color: red, fontSize: 9, marginTop: -40 }}>{kundli ? 'READY' : 'MILAN'}</Text></View><Pressable onPress={() => router.push('/kundli')} style={{ backgroundColor: red, paddingVertical: 8, borderRadius: 4, alignItems: 'center', marginTop: 11 }}><Text style={{ color: '#fff', fontSize: 9, fontWeight: '700' }}>{kundli ? 'VIEW ANALYSIS' : 'COMPARE KUNDLI'}</Text></Pressable></View></View>
+      <View style={{ marginHorizontal: 18, marginTop: 16, flexDirection: 'row' }}><View style={{ flex: 1, padding: 14, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 6, marginRight: 7 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 20, fontWeight: '700' }}>From One Kul to Another</Text><Text style={{ color: colors.muted, fontSize: 10, marginTop: 3 }}>Explore heritage, lineage and family compatibility.</Text><View style={{ flexDirection: 'row', marginTop: 12 }}><HeritageCard icon="home-outline" title="Kul" note="Compatibility" /><HeritageCard icon="git-branch-outline" title="Vansh" note="Lineage" /><HeritageCard icon="grid-outline" title="Gotra" note="Traditions" /></View></View><View style={{ width: 155, padding: 14, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 6 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 20, fontWeight: '700' }}>Kundli Milan</Text><Text style={{ color: colors.muted, fontSize: 10, marginTop: 3 }}>Where tradition meets thoughtful compatibility.</Text><View style={{ alignItems: 'center', marginTop: 12 }}><View style={{ width: 72, height: 72, borderRadius: 36, borderWidth: 2, borderColor: gold, alignItems: 'center', justifyContent: 'center' }}><Ionicons name="planet-outline" size={27} color={gold} /><Text style={{ color: red, fontSize: 9, marginTop: 2 }}>{kundli ? 'READY' : 'MILAN'}</Text></View></View><Pressable onPress={() => router.push('/kundli')} style={{ backgroundColor: red, paddingVertical: 8, borderRadius: 4, alignItems: 'center', marginTop: 11 }}><Text style={{ color: '#fff', fontSize: 9, fontWeight: '700' }}>{kundli ? 'VIEW ANALYSIS' : 'COMPARE KUNDLI'}</Text></Pressable></View></View>
 
       <View style={{ marginHorizontal: 18, marginTop: 14, padding: 15, backgroundColor: '#E5D3B3', borderRadius: 6, flexDirection: 'row', alignItems: 'center' }}><Ionicons name="sparkles-outline" size={26} color={red} /><View style={{ flex: 1, marginLeft: 10 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 17, fontWeight: '700' }}>KULBANDHAN SUGGESTS</Text><Text style={{ color: ink, fontSize: 10, marginTop: 3 }}>Thoughtfully discovered based on your preferences and family values.</Text></View><Pressable onPress={() => router.push('/(tabs)/discover')}><Text style={{ color: red, fontSize: 10, fontWeight: '700' }}>EXPLORE →</Text></Pressable></View>
 
@@ -128,7 +120,7 @@ export default function Home() {
       {!!error && <Text style={{ color: colors.danger, textAlign: 'center', margin: 20 }}>{error}</Text>}
       {!loading && !error && <View style={{ marginTop: 18 }}>
         <View style={{ marginHorizontal: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}><View><Text style={{ color: red, fontFamily: 'serif', fontSize: 23, fontWeight: '700' }}>Recommended for you</Text><Text style={{ color: colors.muted, fontSize: 11, marginTop: 3 }}>Profiles matching your preferences.</Text></View><Pressable onPress={() => router.push('/profiles/all?section=joined')}><Text style={{ color: red, fontSize: 10, fontWeight: '700' }}>VIEW ALL →</Text></Pressable></View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 18, paddingTop: 12 }}>{profiles.slice(0, 8).map((p, index) => <MiniPortrait key={p.userId} profile={p} index={index} />)}</ScrollView>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 18, paddingTop: 12 }}>{profiles.slice(0, 8).map((p) => <MiniPortrait key={p.userId} profile={p} />)}</ScrollView>
         <View style={{ flexDirection: 'row', marginHorizontal: 18, marginTop: 15, gap: 8 }}><Pressable onPress={() => router.push('/(tabs)/profile')} style={{ flex: 1, padding: 15, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 6 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 15, fontWeight: '700' }}>Your Heritage & Family</Text><Text style={{ color: colors.muted, fontSize: 10, marginTop: 4 }}>Keep your family's legacy alive.</Text><Text style={{ color: red, fontSize: 10, fontWeight: '700', marginTop: 9 }}>MANAGE DETAILS  →</Text></Pressable><Pressable onPress={() => router.push('/kundli')} style={{ flex: 1, padding: 15, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 6 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 15, fontWeight: '700' }}>Your Kundli</Text><Text style={{ color: colors.muted, fontSize: 10, marginTop: 4 }}>{kundli ? 'Your astrological profile is ready.' : 'Complete your birth details.'}</Text><Text style={{ color: red, fontSize: 10, fontWeight: '700', marginTop: 9 }}>VIEW KUNDLI  →</Text></Pressable></View>
       </View>}
       <View style={{ marginHorizontal: 18, marginTop: 15, flexDirection: 'row', backgroundColor: maroon, borderRadius: 6 }}><Pressable onPress={() => router.push('/(tabs)/interests')} style={{ flex: 1, alignItems: 'center', padding: 12, borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.3)' }}><Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 21 }}>{interestCount}</Text><Text style={{ color: '#E8DCC5', fontSize: 10 }}>INTERESTS</Text></Pressable><Pressable onPress={() => router.push('/(tabs)/matches')} style={{ flex: 1, alignItems: 'center', padding: 12 }}><Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 21 }}>{matchCount}</Text><Text style={{ color: '#E8DCC5', fontSize: 10 }}>CONNECTIONS</Text></Pressable></View>
