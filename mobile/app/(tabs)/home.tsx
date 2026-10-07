@@ -43,10 +43,22 @@ function ProfileRail({ title, count, profiles, onAll }: { title: string; count: 
   );
 }
 
+function Stat({ icon, label, value, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; value: number; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => [{ flex: 1, alignItems: 'center', paddingVertical: 14, borderRightWidth: 1, borderRightColor: line }, pressed && { opacity: 0.65 }]}>
+      <Ionicons name={icon} size={19} color={colors.maroon} />
+      <Text style={{ color: colors.maroon, fontFamily: 'serif', fontSize: 23, fontWeight: '700', marginTop: 6 }}>{value}</Text>
+      <Text style={{ color: colors.muted, fontSize: 10, marginTop: 2 }}>{label}</Text>
+    </Pressable>
+  );
+}
+
 export default function Home() {
   const [profile, setProfile] = useState<any>(null);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [interestCount, setInterestCount] = useState(0);
+  const [matchCount, setMatchCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -54,15 +66,19 @@ export default function Home() {
   const load = useCallback(async () => {
     setError('');
     try {
-      const [{ profile: mine }, discovered, photos] = await Promise.all([
+      const [{ profile: mine }, discovered, photos, received, matches] = await Promise.all([
         api('/profiles/me'),
         api('/discover?ageMin=18&ageMax=80'),
         api('/photos/me'),
+        api('/interests?box=received'),
+        api('/matches'),
       ]);
       if (!mine) return router.replace('/onboarding');
       setProfile(mine);
       setProfiles(discovered.profiles ?? []);
       setPhotoUrl(photos.photos?.find((photo: any) => photo.visibility === 'public')?.url ?? null);
+      setInterestCount(received.interests?.length ?? 0);
+      setMatchCount(matches.matches?.filter((match: any) => match.profile).length ?? 0);
     } catch (e: any) {
       if (e.code === 'PROFILE_REQUIRED') return router.replace('/onboarding');
       setError(e.message ?? 'Could not load profiles.');
@@ -121,10 +137,40 @@ export default function Home() {
           <CircleAction icon="person-add-outline" title="Discover" note="Meet families" onPress={() => router.push('/(tabs)/discover')} />
         </View>
 
+        <View style={[{ flexDirection: 'row', backgroundColor: colors.offWhite, borderRadius: 18, marginTop: 16, borderWidth: 1, borderColor: line }, shadow]}>
+          <Stat icon="heart-outline" label="Interests" value={interestCount} onPress={() => router.push('/(tabs)/interests')} />
+          <Stat icon="people-outline" label="Matches" value={matchCount} onPress={() => router.push('/(tabs)/matches')} />
+          <Stat icon="compass-outline" label="Discoveries" value={profiles.length} onPress={() => router.push('/(tabs)/discover')} />
+        </View>
+
         <View style={{ marginTop: 24, backgroundColor: colors.beige, borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center' }}>
           <Ionicons name="sparkles-outline" size={23} color={colors.maroon} />
           <View style={{ flex: 1, marginLeft: 12 }}><Text style={{ color: colors.maroon, fontWeight: '800', fontSize: 13 }}>A thoughtful profile travels further.</Text><Text style={{ color: colors.muted, fontSize: 11, marginTop: 3 }}>Complete your story to help families connect with confidence.</Text></View>
           <Pressable onPress={() => router.push('/onboarding')}><Ionicons name="arrow-forward-circle-outline" size={25} color={colors.maroon} /></Pressable>
+        </View>
+
+        <View style={{ marginTop: 24, backgroundColor: colors.offWhite, borderRadius: 18, padding: 18, borderWidth: 1, borderColor: line }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View><Text style={{ color: colors.muted, fontSize: 11, fontWeight: '800', letterSpacing: 1 }}>YOUR STORY</Text><Text style={{ color: colors.maroon, fontFamily: 'serif', fontSize: 21, fontWeight: '700', marginTop: 4 }}>Make your profile memorable</Text></View>
+            <Text style={{ color: colors.gold, fontWeight: '800' }}>{ready}%</Text>
+          </View>
+          <View style={{ height: 6, borderRadius: 3, backgroundColor: colors.beige, marginTop: 14, overflow: 'hidden' }}><View style={{ width: `${ready}%`, height: '100%', backgroundColor: colors.gold }} /></View>
+          {[
+            ['Add your photo', Boolean(photoUrl), '/(tabs)/profile'],
+            ['Share your profession', Boolean(profile?.profession), '/onboarding'],
+            ['Tell families about you', Boolean(profile?.about), '/onboarding'],
+          ].map(([label, done, path]) => (
+            <Pressable key={String(label)} onPress={() => !done && router.push(path as any)} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 14 }}>
+              <Ionicons name={done ? 'checkmark-circle' : 'ellipse-outline'} size={20} color={done ? colors.success : colors.gold} />
+              <Text style={{ flex: 1, color: done ? colors.muted : colors.charcoal, textDecorationLine: done ? 'line-through' : 'none', marginLeft: 9 }}>{label}</Text>
+              {!done && <Ionicons name="arrow-forward" size={16} color={colors.maroon} />}
+            </Pressable>
+          ))}
+        </View>
+
+        <View style={{ marginTop: 24, padding: 18, borderRadius: 18, backgroundColor: colors.maroonDark, flexDirection: 'row', alignItems: 'center' }}>
+          <Ionicons name="shield-checkmark-outline" size={25} color="#DDBE77" />
+          <View style={{ flex: 1, marginLeft: 12 }}><Text style={{ color: '#fff', fontWeight: '700' }}>Private by design</Text><Text style={{ color: '#EADCCD', fontSize: 11, lineHeight: 17, marginTop: 4 }}>Your details are shared thoughtfully and fuller family information stays protected until trust is mutual.</Text></View>
         </View>
 
         {loading && <ActivityIndicator color={colors.maroon} style={{ marginTop: 28 }} />}
