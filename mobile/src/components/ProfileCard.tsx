@@ -16,11 +16,6 @@ export function ProfileCard({ p, children, variant = 'full' }: { p: any; childre
       </View>
       <Text numberOfLines={1} style={{ color: colors.charcoal, fontSize: variant === 'grid' ? 15 : 17, fontWeight: '600', marginTop: 10 }}>{p.displayName}</Text>
       <Text numberOfLines={1} style={{ color: colors.muted, marginTop: 3 }}>{p.age} years{p.heightCm ? ` · ${p.heightCm} cm` : ''}</Text>
-      {!!(p.city || p.profession) && <Text numberOfLines={1} style={{ color: colors.muted, fontSize: 12, marginTop: 3 }}>{[p.city, p.profession].filter(Boolean).join(' · ')}</Text>}
-      {!!p.badges?.length && <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 7 }}>
-        <Ionicons name="shield-checkmark" size={13} color={colors.success} />
-        <Text style={{ color: colors.success, fontSize: 11, fontWeight: '700', marginLeft: 4 }}>Verified</Text>
-      </View>}
     </Pressable>
   );
 

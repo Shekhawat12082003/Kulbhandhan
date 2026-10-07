@@ -177,8 +177,6 @@ export default function Home() {
         {!!error && <Text style={{ color: colors.danger, textAlign: 'center', marginTop: 24 }}>{error}</Text>}
         {!loading && !error && <>
           <ProfileRail title="New introductions" count={profiles.length} profiles={profiles.slice(0, 8)} onAll={() => router.push('/profiles/all?section=joined')} />
-          <ProfileRail title="Profiles with photos" count={profiles.filter((p) => p.photoUrl).length} profiles={profiles.filter((p) => p.photoUrl).slice(0, 8)} onAll={() => router.push('/profiles/all?section=active')} />
-          <ProfileRail title="Verified introductions" count={profiles.filter((p) => p.badges?.length).length} profiles={profiles.filter((p) => p.badges?.length).slice(0, 8)} onAll={() => router.push('/profiles/all?section=active')} />
           <ProfileRail title="People online recently" count={profiles.length} profiles={profiles.slice(0, 8)} onAll={() => router.push('/profiles/all?section=active')} />
         </>}
       </ScrollView>
