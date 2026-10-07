@@ -13,6 +13,12 @@ const sandstone = '#C8A77A';
 const ink = '#2C211B';
 const paper = '#FBF5E8';
 const border = '#D6BE98';
+const referencePortraits = [
+  require('../../assets/heritage/profiles/priya.jpg'),
+  require('../../assets/heritage/profiles/ananya.jpg'),
+  require('../../assets/heritage/profiles/isha.jpg'),
+  require('../../assets/heritage/profiles/neha.jpg'),
+];
 
 const storyFields = [
   ['Personal Details', (p: any) => Boolean(p?.displayName && p?.city)],
@@ -29,11 +35,11 @@ function percent(profile: any) {
   return Math.round(storyFields.filter(([, check]) => check(profile)).length / storyFields.length * 100);
 }
 
-function MiniPortrait({ profile }: { profile: any }) {
+function MiniPortrait({ profile, index }: { profile: any; index: number }) {
   return (
     <Pressable onPress={() => router.push(`/view/${profile.userId}`)} style={[{ width: 132, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 5, padding: 6, marginRight: 10 }, shadow]}>
       <View style={{ height: 132, backgroundColor: '#E6D4B8', borderRadius: 3, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-        {profile.photoUrl ? <Image source={{ uri: profile.photoUrl }} resizeMode="cover" style={{ width: '100%', height: '100%' }} /> : <Ionicons name="person" size={48} color={red} />}
+        <Image source={profile.photoUrl ? { uri: profile.photoUrl } : referencePortraits[index % referencePortraits.length]} resizeMode="cover" style={{ width: '100%', height: '100%' }} />
       </View>
       <Text numberOfLines={1} style={{ color: red, fontFamily: 'serif', fontSize: 14, fontWeight: '700', marginTop: 7 }}>{profile.displayName}</Text>
       <Text numberOfLines={1} style={{ color: colors.muted, fontSize: 10, marginTop: 2 }}>{profile.age}{profile.city ? ` · ${profile.city}` : ''}</Text>
@@ -120,7 +126,7 @@ export default function Home() {
       {!!error && <Text style={{ color: colors.danger, textAlign: 'center', margin: 20 }}>{error}</Text>}
       {!loading && !error && <View style={{ marginTop: 18 }}>
         <View style={{ marginHorizontal: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}><View><Text style={{ color: red, fontFamily: 'serif', fontSize: 23, fontWeight: '700' }}>Recommended for you</Text><Text style={{ color: colors.muted, fontSize: 11, marginTop: 3 }}>Profiles matching your preferences.</Text></View><Pressable onPress={() => router.push('/profiles/all?section=joined')}><Text style={{ color: red, fontSize: 10, fontWeight: '700' }}>VIEW ALL →</Text></Pressable></View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 18, paddingTop: 12 }}>{profiles.slice(0, 8).map((p) => <MiniPortrait key={p.userId} profile={p} />)}</ScrollView>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 18, paddingTop: 12 }}>{profiles.slice(0, 8).map((p, index) => <MiniPortrait key={p.userId} profile={p} index={index} />)}</ScrollView>
         <View style={{ flexDirection: 'row', marginHorizontal: 18, marginTop: 15, gap: 8 }}><Pressable onPress={() => router.push('/(tabs)/profile')} style={{ flex: 1, padding: 15, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 6 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 15, fontWeight: '700' }}>Your Heritage & Family</Text><Text style={{ color: colors.muted, fontSize: 10, marginTop: 4 }}>Keep your family's legacy alive.</Text><Text style={{ color: red, fontSize: 10, fontWeight: '700', marginTop: 9 }}>MANAGE DETAILS  →</Text></Pressable><Pressable onPress={() => router.push('/kundli')} style={{ flex: 1, padding: 15, backgroundColor: paper, borderWidth: 1, borderColor: border, borderRadius: 6 }}><Text style={{ color: red, fontFamily: 'serif', fontSize: 15, fontWeight: '700' }}>Your Kundli</Text><Text style={{ color: colors.muted, fontSize: 10, marginTop: 4 }}>{kundli ? 'Your astrological profile is ready.' : 'Complete your birth details.'}</Text><Text style={{ color: red, fontSize: 10, fontWeight: '700', marginTop: 9 }}>VIEW KUNDLI  →</Text></Pressable></View>
       </View>}
       <View style={{ marginHorizontal: 18, marginTop: 15, flexDirection: 'row', backgroundColor: maroon, borderRadius: 6 }}><Pressable onPress={() => router.push('/(tabs)/interests')} style={{ flex: 1, alignItems: 'center', padding: 12, borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.3)' }}><Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 21 }}>{interestCount}</Text><Text style={{ color: '#E8DCC5', fontSize: 10 }}>INTERESTS</Text></Pressable><Pressable onPress={() => router.push('/(tabs)/matches')} style={{ flex: 1, alignItems: 'center', padding: 12 }}><Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 21 }}>{matchCount}</Text><Text style={{ color: '#E8DCC5', fontSize: 10 }}>CONNECTIONS</Text></Pressable></View>
