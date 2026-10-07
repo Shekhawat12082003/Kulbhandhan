@@ -44,7 +44,7 @@ export default function Welcome() {
         </View>
 
         <View style={{ gap: 12, paddingTop: 22 }}>
-          <Button title="Begin your introduction" onPress={() => router.push('/auth/register')} />
+          <Button title="Create your account" onPress={() => router.push('/auth/register')} />
           <Pressable onPress={() => router.push('/auth/login')} accessibilityRole="button" style={{ minHeight: 44, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ color: colors.maroon, fontSize: 14, fontWeight: '600' }}>I already have an account</Text>
           </Pressable>

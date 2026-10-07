@@ -79,7 +79,7 @@ export default function Register() {
           backgroundColor: adult ? colors.maroon : 'transparent', marginRight: 12 }} />
         <Text style={{ flex: 1, color: colors.charcoal }}>I confirm that I am 18 years or older and this profile is for marriage.</Text>
       </Pressable>
-      <Button title="Send Verification Code" onPress={submit} loading={loading} />
+      <Button title="Continue to verification" onPress={submit} loading={loading} />
     </Screen>
   );
 }
