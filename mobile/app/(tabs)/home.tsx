@@ -7,43 +7,38 @@ import { api } from '../../src/lib/api';
 import { ProfileCard } from '../../src/components/ProfileCard';
 import { colors, shadow } from '../../src/theme';
 
-const RED = colors.maroon;
-const INK = colors.charcoal;
+const line = '#D8C8B1';
 
-function profileCompletion(profile: any) {
+function completion(profile: any) {
   const fields = ['displayName', 'city', 'state', 'heightCm', 'education', 'profession', 'about'];
   return Math.round(fields.filter((field) => profile?.[field]).length / fields.length * 100);
 }
 
-function Action({ icon, label, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void }) {
+function CircleAction({ icon, title, note, onPress }: { icon: keyof typeof Ionicons.glyphMap; title: string; note: string; onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => [{ alignItems: 'center', width: 92 }, pressed && { opacity: 0.75 }]}>
-      <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: RED, alignItems: 'center', justifyContent: 'center' }}>
-        <Ionicons name={icon} size={28} color="#fff" />
+    <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => [{ flex: 1, minHeight: 116, backgroundColor: colors.offWhite, borderRadius: 18, padding: 14, borderWidth: 1, borderColor: line }, pressed && { opacity: 0.7 }]}>
+      <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: colors.beige, alignItems: 'center', justifyContent: 'center' }}>
+        <Ionicons name={icon} size={19} color={colors.maroon} />
       </View>
-      <Text style={{ color: colors.maroon, fontSize: 11, fontWeight: '700', marginTop: 8, letterSpacing: 0.5 }}>{label}</Text>
+      <Text style={{ color: colors.maroon, fontWeight: '800', fontSize: 13, marginTop: 12 }}>{title}</Text>
+      <Text style={{ color: colors.muted, fontSize: 11, marginTop: 4 }}>{note}</Text>
     </Pressable>
   );
 }
 
-function Section({ title, count, subtitle, profiles, onShowAll }: { title: string; count: number; subtitle: string; profiles: any[]; onShowAll: () => void }) {
+function ProfileRail({ title, count, profiles, onAll }: { title: string; count: number; profiles: any[]; onAll: () => void }) {
   return (
-    <View style={[{ backgroundColor: '#fff', borderRadius: 24, padding: 18, marginBottom: 16 }, shadow]}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ color: INK, fontFamily: 'serif', fontSize: 21, fontWeight: '700' }}>{title} <Text style={{ color: RED }}>({count})</Text></Text>
-          <Text style={{ color: colors.muted, marginTop: 4 }}>{subtitle}</Text>
+    <View style={{ marginTop: 26 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 12 }}>
+        <View>
+          <Text style={{ color: colors.muted, fontSize: 11, fontWeight: '800', letterSpacing: 1.2 }}>THE CIRCLE</Text>
+          <Text style={{ color: colors.charcoal, fontFamily: 'serif', fontSize: 23, fontWeight: '700', marginTop: 3 }}>{title}</Text>
         </View>
-        <Pressable onPress={onShowAll} accessibilityRole="button" style={{ alignItems: 'center', padding: 6 }}>
-          <Ionicons name="eye-outline" size={22} color={RED} />
-          <Text style={{ color: RED, fontSize: 11, fontWeight: '700' }}>SHOW ALL</Text>
-        </Pressable>
+        <Pressable onPress={onAll} accessibilityRole="button"><Text style={{ color: colors.maroon, fontWeight: '800', fontSize: 12 }}>VIEW ALL ({count})</Text></Pressable>
       </View>
       {profiles.length > 0
-        ? <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingTop: 16 }}>
-            {profiles.map((profile) => <ProfileCard key={profile.userId} p={profile} variant="preview" />)}
-          </ScrollView>
-        : <Text style={{ color: colors.muted, marginTop: 18 }}>No profiles are available yet.</Text>}
+        ? <ScrollView horizontal showsHorizontalScrollIndicator={false}>{profiles.map((p) => <ProfileCard key={p.userId} p={p} variant="preview" />)}</ScrollView>
+        : <View style={{ borderWidth: 1, borderColor: line, borderRadius: 16, padding: 18 }}><Text style={{ color: colors.muted }}>Your circle is still growing.</Text></View>}
     </View>
   );
 }
@@ -75,67 +70,68 @@ export default function Home() {
   }, []);
 
   useFocusEffect(useCallback(() => { setLoading(true); load(); }, [load]));
-  const completion = profileCompletion(profile);
+  const ready = completion(profile);
   const firstName = profile?.displayName?.split(' ')[0] ?? 'there';
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.ivory }}>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 28 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={RED} />}>
-        <View style={{ paddingTop: 14, paddingBottom: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 34 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={colors.maroon} />}
+      >
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 18, paddingBottom: 24 }}>
           <View>
-            <Text style={{ color: colors.maroon, fontSize: 12, fontWeight: '800', letterSpacing: 2 }}>KULBANDHAN</Text>
-            <Text style={{ color: colors.muted, fontSize: 12, marginTop: 4 }}>Your trusted circle</Text>
+            <Text style={{ color: colors.maroon, fontFamily: 'serif', fontSize: 22, fontWeight: '700', letterSpacing: 1 }}>kulbandhan</Text>
+            <Text style={{ color: colors.muted, fontSize: 11, marginTop: 2 }}>Do kul, ek bandhan</Text>
           </View>
-          <View style={{ flexDirection: 'row', gap: 12 }}>
-            <Pressable onPress={() => router.push('/(tabs)/discover')} accessibilityLabel="Search profiles" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: colors.offWhite, alignItems: 'center', justifyContent: 'center' }}>
-              <Ionicons name="search-outline" size={21} color={colors.maroon} />
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            <Pressable onPress={() => router.push('/(tabs)/discover')} style={{ width: 42, height: 42, borderRadius: 21, borderWidth: 1, borderColor: line, alignItems: 'center', justifyContent: 'center' }} accessibilityLabel="Search profiles">
+              <Ionicons name="search-outline" size={20} color={colors.maroon} />
             </Pressable>
-            <Pressable onPress={() => router.push('/(tabs)/interests')} accessibilityLabel="Open interests" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: colors.offWhite, alignItems: 'center', justifyContent: 'center' }}>
-              <Ionicons name="notifications-outline" size={21} color={colors.maroon} />
+            <Pressable onPress={() => router.push('/(tabs)/interests')} style={{ width: 42, height: 42, borderRadius: 21, borderWidth: 1, borderColor: line, alignItems: 'center', justifyContent: 'center' }} accessibilityLabel="Open interests">
+              <Ionicons name="notifications-outline" size={20} color={colors.maroon} />
             </Pressable>
           </View>
         </View>
 
-        <View style={[{ backgroundColor: RED, borderRadius: 28, padding: 22, overflow: 'hidden' }, shadow]}>
-          <View style={{ position: 'absolute', right: -44, top: -54, width: 190, height: 190, borderRadius: 95, borderWidth: 1, borderColor: 'rgba(231,198,106,0.35)' }} />
-          <View style={{ position: 'absolute', right: 14, top: 14, width: 76, height: 76, borderRadius: 38, borderWidth: 1, borderColor: 'rgba(231,198,106,0.35)' }} />
-          <Text style={{ color: '#E7C66A', fontSize: 11, fontWeight: '800', letterSpacing: 1.5 }}>GOOD TO SEE YOU, {firstName.toUpperCase()}</Text>
-          <Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 30, marginTop: 14 }}>Your circle starts here.</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 22 }}>
-            <View style={{ width: 78, height: 78, borderRadius: 39, backgroundColor: colors.ivory, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: '#E7C66A' }}>
-              {photoUrl ? <Image source={{ uri: photoUrl }} style={{ width: '100%', height: '100%' }} /> : <Ionicons name="person" size={48} color={colors.maroon} />}
-            </View>
-            <View style={{ flex: 1, marginLeft: 14 }}>
-              <Text style={{ color: '#fff', fontSize: 19, fontWeight: '700' }}>{profile?.displayName}</Text>
-              <Text style={{ color: '#F4E9D8', marginTop: 5 }}>{profile?.published ? 'Profile is visible' : 'Profile is paused'}</Text>
-            </View>
-            <Pressable onPress={() => router.push('/onboarding')} accessibilityRole="button" style={{ backgroundColor: '#E7C66A', borderRadius: 16, padding: 11 }}>
-              <Ionicons name="create-outline" size={21} color="#fff" />
-            </Pressable>
-          </View>
-          <View style={{ marginTop: 22, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <View style={{ backgroundColor: colors.maroon, borderRadius: 24, padding: 22, ...shadow }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Text style={{ color: '#F4E9D8', fontSize: 11, fontWeight: '700' }}>PROFILE READINESS</Text><Text style={{ color: '#E7C66A', fontSize: 11, fontWeight: '800' }}>{completion}%</Text></View>
-              <View style={{ height: 7, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.25)', marginTop: 8, overflow: 'hidden' }}><View style={{ width: `${completion}%`, height: '100%', backgroundColor: '#E7C66A' }} /></View>
+              <Text style={{ color: '#DDBE77', fontSize: 11, fontWeight: '800', letterSpacing: 1.5 }}>YOUR INTRODUCTION JOURNEY</Text>
+              <Text style={{ color: '#fff', fontFamily: 'serif', fontSize: 29, lineHeight: 34, marginTop: 12 }}>Namaste, {firstName}.</Text>
+              <Text style={{ color: '#F1E6D8', fontSize: 13, lineHeight: 19, marginTop: 10 }}>A meaningful connection begins with a well-known story.</Text>
             </View>
-            <View style={{ width: 1, height: 30, backgroundColor: 'rgba(255,255,255,0.3)' }} />
-            <View><Text style={{ color: '#F4E9D8', fontSize: 10 }}>STATUS</Text><Text style={{ color: '#fff', fontSize: 12, fontWeight: '700', marginTop: 3 }}>{profile?.badges?.length ? 'VERIFIED' : 'ACTIVE'}</Text></View>
+            <Pressable onPress={() => router.push('/onboarding')} accessibilityRole="button">
+              <View style={{ width: 70, height: 70, borderRadius: 35, backgroundColor: colors.ivory, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#DDBE77' }}>
+                {photoUrl ? <Image source={{ uri: photoUrl }} style={{ width: '100%', height: '100%' }} /> : <Ionicons name="person-outline" size={32} color={colors.maroon} />}
+              </View>
+              <Text style={{ color: '#DDBE77', fontSize: 10, textAlign: 'center', marginTop: 7 }}>EDIT</Text>
+            </Pressable>
+          </View>
+          <View style={{ marginTop: 22, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.2)', paddingTop: 15 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Text style={{ color: '#F1E6D8', fontSize: 11, fontWeight: '700' }}>PROFILE READINESS</Text><Text style={{ color: '#DDBE77', fontSize: 11, fontWeight: '800' }}>{ready}%</Text></View>
+            <View style={{ height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.2)', marginTop: 8 }}><View style={{ width: `${ready}%`, height: '100%', borderRadius: 3, backgroundColor: '#DDBE77' }} /></View>
           </View>
         </View>
 
-        <Text style={{ color: colors.maroon, fontFamily: 'serif', fontSize: 20, fontWeight: '700', marginTop: 24, marginBottom: 12 }}>Your next step</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: colors.offWhite, borderRadius: 20, paddingVertical: 17, ...shadow }}>
-          <Action icon="chatbubble-ellipses-outline" label="MESSAGE" onPress={() => router.push('/(tabs)/matches')} />
-          <Action icon="bookmark-outline" label="SHORTLISTED" onPress={() => router.push('/(tabs)/matches')} />
-          <Action icon="heart-outline" label="INTEREST" onPress={() => router.push('/(tabs)/interests')} />
+        <Text style={{ color: colors.maroon, fontFamily: 'serif', fontSize: 22, fontWeight: '700', marginTop: 28, marginBottom: 12 }}>Your introductions</Text>
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          <CircleAction icon="heart-outline" title="Interests" note="Show interest" onPress={() => router.push('/(tabs)/interests')} />
+          <CircleAction icon="chatbubble-ellipses-outline" title="Conversations" note="Your matches" onPress={() => router.push('/(tabs)/matches')} />
+          <CircleAction icon="person-add-outline" title="Discover" note="Meet families" onPress={() => router.push('/(tabs)/discover')} />
         </View>
 
-        {loading && <ActivityIndicator color={RED} style={{ marginVertical: 20 }} />}
-        {!!error && <Text style={{ color: colors.danger, textAlign: 'center', margin: 20 }}>{error}</Text>}
+        <View style={{ marginTop: 24, backgroundColor: colors.beige, borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center' }}>
+          <Ionicons name="sparkles-outline" size={23} color={colors.maroon} />
+          <View style={{ flex: 1, marginLeft: 12 }}><Text style={{ color: colors.maroon, fontWeight: '800', fontSize: 13 }}>A thoughtful profile travels further.</Text><Text style={{ color: colors.muted, fontSize: 11, marginTop: 3 }}>Complete your story to help families connect with confidence.</Text></View>
+          <Pressable onPress={() => router.push('/onboarding')}><Ionicons name="arrow-forward-circle-outline" size={25} color={colors.maroon} /></Pressable>
+        </View>
+
+        {loading && <ActivityIndicator color={colors.maroon} style={{ marginTop: 28 }} />}
+        {!!error && <Text style={{ color: colors.danger, textAlign: 'center', marginTop: 24 }}>{error}</Text>}
         {!loading && !error && <>
-          <Section title="Recently Joined" count={profiles.length} subtitle={`You have ${profiles.length} recently joined profiles.`} profiles={profiles.slice(0, 8)} onShowAll={() => router.push('/profiles/all?section=joined')} />
-          <Section title="Recently Active" count={profiles.length} subtitle={`You have ${profiles.length} recently active profiles.`} profiles={profiles.slice(0, 8)} onShowAll={() => router.push('/profiles/all?section=active')} />
+          <ProfileRail title="New introductions" count={profiles.length} profiles={profiles.slice(0, 8)} onAll={() => router.push('/profiles/all?section=joined')} />
+          <ProfileRail title="People online recently" count={profiles.length} profiles={profiles.slice(0, 8)} onAll={() => router.push('/profiles/all?section=active')} />
         </>}
       </ScrollView>
     </SafeAreaView>
